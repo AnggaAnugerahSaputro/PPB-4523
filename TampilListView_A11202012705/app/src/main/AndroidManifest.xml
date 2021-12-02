@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TampilListView_A11202012705">
         <activity
+            android:name=".updateData"
+            android:exported="true" />
+        <activity
             android:name=".TampilListview_A11202012705"
             android:exported="true">
             <intent-filter>

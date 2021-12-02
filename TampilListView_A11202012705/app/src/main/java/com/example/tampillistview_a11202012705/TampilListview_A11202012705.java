@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
+import android.icu.text.Transliterator;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Adapter;
@@ -30,30 +32,30 @@ public class TampilListview_A11202012705 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tampil_listview_a11202012705);
 
-        listView=findViewById(R.id.listdatabuah);
-        editText=findViewById(R.id.databuah);
-        tomboltmbh=findViewById(R.id.tomboltmbh);
-        listviewku=new ArrayList<>();
+        listView = findViewById(R.id.listdatabuah);
+        editText = findViewById(R.id.databuah);
+        tomboltmbh = findViewById(R.id.tomboltmbh);
+        listviewku = new ArrayList<>();
 
         tampilkan_buah();
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-                final String noid=listviewku.get(position);
-                final String nomor=noid.substring(0,2);
-                //editText.setText(nomor.toString());
-                new  AlertDialog.Builder(TampilListview_A11202012705.this)
+                final String noid = listviewku.get(position);
+                final String nomor = noid.substring(0, 2);
+                editText.setText(nomor.toString());
+                new AlertDialog.Builder(TampilListview_A11202012705.this)
                         .setTitle("Perhatian")
                         .setMessage("Yakin Menghapus Data ini ?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int which) {
+                            public void onClick(DialogInterface dialog, int which) {
                                 bd.hapusRecord(Integer.parseInt(nomor));
                                 listviewku.remove(position);
                                 listView.invalidateViews();
                             }
                         })
-                        .setNegativeButton("No",null)
+                        .setNegativeButton("No", null)
                         .show();
                 return false;
             }
@@ -63,24 +65,46 @@ public class TampilListview_A11202012705 extends AppCompatActivity {
             public void onClick(View view) {
                 bd.TambahData(editText.getText().toString());
                 Toast.makeText(TampilListview_A11202012705.this, "Data Tersimpan", Toast.LENGTH_SHORT).show();
+                listviewku.clear();
                 tampilkan_buah();
             }
         });
-    }
 
-    private void tampilkan_buah() {
-        Cursor cursor=bd.tampilBuah();
-        if (cursor.getCount()==0)
-        {
-            Toast.makeText( this, "Record Kosong", Toast.LENGTH_SHORT).show();
-        }else {
-            while (cursor.moveToNext())
-            {
-                listviewku.add(String.valueOf(cursor.getInt(0)+" "+cursor.getString(1));
+
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String noid = listviewku.get(position).toString();
+                String nomor = noid.substring(0, 2);
+                String nama = listviewku.get(position).toString();
+
+                if (nama != null && nama != "") {
+                    Intent intent = new Intent(TampilListview_A11202012705.this, updateData.class);
+                    intent.putExtra("data1", nomor);
+                    intent.putExtra("data2", nama);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getApplication(), "Data Masih Kosong !", Toast.LENGTH_SHORT);
+                }
+
             }
-            adapter=new ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,listviewku);
-            listView.setAdapter(adapter);
+        });
 
+
+    }
+    private void tampilkan_buah() {
+        Cursor cursor = bd.tampilBuah();
+        if (cursor.getCount() == 0) {
+            Toast.makeText(this, "Record Kosong", Toast.LENGTH_SHORT).show();
+        } else {
+            while (cursor.moveToNext()) {
+                listviewku.add(String.valueOf(cursor.getInt(0))+ " " + cursor.getString(1));
+                adapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, listviewku);
+                listView.setAdapter(adapter);
+
+            }
         }
     }
 }

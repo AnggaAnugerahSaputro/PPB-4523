@@ -11,9 +11,9 @@ import androidx.annotation.Nullable;
 public class BantuDataBase extends SQLiteOpenHelper {
 
 
-    public static final String DATABASE_BUAH = "db_buah";
-    private static final String TABEL_BUAH= "tabel_buah";
-    public static final String KODE = "kode";
+    private static final String DATABASE_BUAH = "db_buah";
+    private static final String TABEL_BUAH = "tabel_buah";
+    private static final String KODE = "kode";
     private static final String NAMA_BUAH = "nm_buah";
 
 
@@ -23,7 +23,7 @@ public class BantuDataBase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String nama_tabel="create table"+TABEL_BUAH+ "(" + KODE + " ineger primary key autoincrement," + NAMA_BUAH + " text)";
+        String nama_tabel = "create table " + TABEL_BUAH + "(" + KODE + " ineger primary key autoincrement," + NAMA_BUAH + " text)";
         db.execSQL(nama_tabel);
 
     }
@@ -32,26 +32,34 @@ public class BantuDataBase extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
     }
 
-    public boolean TambahData(String namabuah)
-    {
-        SQLiteDatabase db=this.getWritableDatabase();
-        ContentValues contentValues=new ContentValues();
-        contentValues.put(NAMA_BUAH);
+    public boolean TambahData(String namabuah) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(NAMA_BUAH, namabuah);
 
-        long hasil=db.insert(TABEL_BUAH,null,contentValues);
+        long hasil = db.insert(TABEL_BUAH, null, contentValues);
         return hasil != -1;
     }
-    public void tampilBuah()
-    {
-        SQLiteDatabase db=this.getWritableDatabase();
-        String sql="select * from"+TABEL_BUAH;
-        Cursor cursor=db.rawQuery(sql,null);
+
+    public Cursor tampilBuah() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String sql = "select * from " + TABEL_BUAH;
+        Cursor cursor = db.rawQuery(sql, null);
+        return cursor;
     }
-    public boolean hapusRecord(String id)
-    {
-        TampilListview_A11202012705.editText.setText(""+id);
-        SQLiteDatabase db:this.getWritableDatabase();
-        boolean hasil=db.delete(TABEL_BUAH,KODE+"="+id,null)>0;
+
+    public boolean hapusRecord(int id) {
+        TampilListview_A11202012705.editText.setText("" + id);
+        SQLiteDatabase db;
+        this.getWritableDatabase();
+        return db.delete(TABEL_BUAH, KODE + "=" + id, null) > 0;
+    }
+    public boolean updateData(String name, String id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(NAMA_BUAH,name);
+        db.update(TABEL_BUAH,contentValues,"kode = ?",new String[]{id});
+        return true;
     }
 
 }
